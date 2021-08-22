@@ -1,4 +1,6 @@
-export const createPopapFilmTemplate = (array) => {
+import {createElement} from '../utils.js';
+
+const createPopapFilmTemplate = (array) => {
   const {title,rating,url,fullDate,duration,genre,description,comments,director,writers,actors,MPAA, wathclist, watched, favorite} = array;
 
   const wathclistAddClass = wathclist === true ? 'film-details__control-button--active' : '';
@@ -131,3 +133,25 @@ export const createPopapFilmTemplate = (array) => {
           </div>
         </div>`;
 };
+
+export default class PopupFilm {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPopapFilmTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

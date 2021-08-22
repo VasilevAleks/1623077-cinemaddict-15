@@ -1,4 +1,6 @@
-export const createFilmCardTemplate = (array) => {
+import {createElement} from '../utils.js';
+
+const createFilmCardTemplate = (array) => {
   const {title,rating,url,year,duration,genre,description,comments, wathclist, watched, favorite} = array;
 
   const wathclistAddClass = wathclist === true ? 'film-card__controls-item--active' : '';
@@ -23,3 +25,27 @@ export const createFilmCardTemplate = (array) => {
   </div>
 </article>`;
 };
+
+
+export default class FilmCard {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
