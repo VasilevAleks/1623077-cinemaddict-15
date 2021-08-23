@@ -1,16 +1,16 @@
 import {createElement} from '../utils.js';
 
-const createMoreFilmsButton = () => (`
-<button class="films-list__show-more">Show more</button>
-`);
+const createFilmContainer = () => (
+  `<div class="films-list__container">
+</div>`);
 
-export default class MoreFilmsButton {
+export default class FilmContainer {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createMoreFilmsButton();
+    return createFilmContainer();
   }
 
   getElement() {
