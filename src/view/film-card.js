@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createFilmCardTemplate = (array) => {
   const {title,rating,url,year,duration,genre,description,comments, wathclist, watched, favorite} = array;
@@ -26,26 +26,41 @@ const createFilmCardTemplate = (array) => {
 </article>`;
 };
 
-
-export default class FilmCard {
+export default class FilmCard extends AbstractView {
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
+
+    this._clickFilmHandler = this._clickFilmHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickFilmHandler(evt) {
+    evt.preventDefault();
+    this._callback.filmBlockClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setTitleClickHandler(callback) {
+    this._callback.filmBlockClick = callback;
+    this.getElement().querySelector('.film-card__title').addEventListener('click', this._clickFilmHandler);
+
+  }
+
+  setPosterClickHandler(callback) {
+    this.getElement().querySelector('.film-card__poster').addEventListener('click', this._clickFilmHandler);
+    this._callback.filmBlockClick = callback;
+  }
+
+  setDescriptionClickHandler(callback) {
+    this.getElement().querySelector('.film-card__description').addEventListener('click', this._clickFilmHandler);
+    this._callback.filmBlockClick = callback;
+  }
+
+  setCommentsClickHandler(callback) {
+    this.getElement().querySelector('.film-card__comments').addEventListener('click', this._clickFilmHandler);
+    this._callback.filmBlockClick = callback;
   }
 }
