@@ -24,11 +24,14 @@ export default class MovieList {
     this._moreFilmsButtonComponent = new MoreFilmsButton();
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
+    this._handleMovieChange = this._handleMovieChange.bind(this);
+    this._handleStatusPopupChange = this._handleStatusPopupChange.bind(this);
   }
 
   init(filmsArray) {
-    this._filmsArray = filmsArray.slice();
+    this._array = filmsArray;
 
+    this._filmsArray = filmsArray.slice();
     render(this._listContainer,this._filmComponent, RenderPosition.BEFOREEND);
     this._renderMovieList();
   }
@@ -52,27 +55,16 @@ export default class MovieList {
     remove(this._moreFilmsButtonComponent);
   }
 
-  _handleMovieChange(updatedMovieList){
-
+  _handleMovieChange(updatedMovieList) {
     this._filmsArray = updateItem(this._filmsArray, updatedMovieList);
     this._filmPresenter.get(updatedMovieList.id).unit(updatedMovieList);
   }
 
-  _renderFilmCard(movie) {
-    const filmPresenter = new Film(this._containerComponent, this._handleMovieChange);
-    filmPresenter.unit(movie);
-    this._filmPresenter.set(movie.id, filmPresenter);
-  }
-
-  _renderFilmCards(from, to) {
-    this._filmsArray
-      .slice(from, to)
-      .forEach((filmsArray) => this._renderFilmCard(filmsArray));
-
+  _handleStatusPopupChange() {
+    this._filmPresenter.forEach((presenter) => presenter.resetView());
   }
 
   _handleLoadMoreButtonClick() {
-
     this._renderFilmCards(this._renderedFilmsCount, this._renderedFilmsCount + FILMS_STEP);
     this._renderedFilmsCount += FILMS_STEP;
 
@@ -93,6 +85,18 @@ export default class MovieList {
     if(this._filmsArray.length > FILMS_STEP) {
       this._renderMoreFilmsButton();
     }
+  }
+
+  _renderFilmCard(movie) {
+    const filmPresenter = new Film(this._containerComponent, this._handleMovieChange, this._handleStatusPopupChange);
+    filmPresenter.unit(movie);
+    this._filmPresenter.set(movie.id, filmPresenter);
+  }
+
+  _renderFilmCards(from, to) {
+    this._filmsArray
+      .slice(from, to)
+      .forEach((filmsArray) => this._renderFilmCard(filmsArray));
   }
 
   _renderMovieList() {
