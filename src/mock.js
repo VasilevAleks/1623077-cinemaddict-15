@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 
 const getRandomInteger = (min = 0, max = 0) => Math.floor(Math.random() * (max - min + 1)) + min;
 const getRandomFilmRating = (min = 0, max = 0) =>(Math.random() * (max - min + 1) + min).toFixed(2);
@@ -179,6 +180,7 @@ export const createFilmCard = (count) => {
       return dayjs(formatFullDate).format('DD/MMMM/YYYY');
     };
     generateCard.push({
+      id: nanoid(),
       title: FILMS[getRandomInteger(0,FILMS.length-1)],
       rating: getRandomFilmRating(0,MAX_RATING),
       url: `${POSTER_URL}${FILMS_URL[getRandomInteger(0,FILMS_URL.length-1)]}`,
