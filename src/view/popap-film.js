@@ -142,7 +142,7 @@ export default class PopupFilm extends AbstractView {
   }
 
   getTemplate() {
-    return createPopapFilmTemplate (this._film);
+    return createPopapFilmTemplate(this._film);
   }
 
   _closeClickHandler(evt) {
