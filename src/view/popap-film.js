@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 
 const createPopapFilmTemplate = (array) => {
   const {title,rating,url,fullDate,duration,genre,description,comments,director,writers,actors,MPAA, wathclist, watched, favorite} = array;
@@ -113,36 +113,54 @@ const createPopapFilmTemplate = (array) => {
           <div class="film-details__emoji-list">
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
             <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/smile.png" data-name="smile" width="30" height="30" alt="emoji">
             </label>
 
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
             <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/sleeping.png" data-name="sleeping" width="30" height="30" alt="emoji">
             </label>
 
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
             <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/puke.png" data-name="puke" width="30" height="30" alt="emoji">
             </label>
 
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
             <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/angry.png" data-name="angry" width="30" height="30" alt="emoji">
             </label>
           </div>
         </div>`;
 };
 
-export default class PopupFilm extends AbstractView {
+export default class PopupFilm extends SmartView {
   constructor(film) {
     super();
-    this._film = film;
+    this._data = PopupFilm.parseFilmToData(film);
     this._closeClickHandler = this._closeClickHandler.bind(this);
+    this._addEmojiClickHandler = this._addEmojiClickHandler.bind(this);
+    this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createPopapFilmTemplate (this._film);
+    return createPopapFilmTemplate (this._data);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.film-details__emoji-list')
+      .addEventListener('click', this._addEmojiClickHandler);
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .addEventListener('input', this._commentTextAreaHandler);
+  }
+
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseClickHandle(this._closeClickHandler);
   }
 
   _closeClickHandler(evt) {
@@ -153,5 +171,62 @@ export default class PopupFilm extends AbstractView {
   setCloseClickHandler(callback) {
     this._callback.closeClick = callback;
     this.getElement().querySelector('.film-details__close').addEventListener('click', this._closeClickHandler);
+  }
+
+
+  updateElement(newData) {
+    this._data = PopupFilm.parseFilmToData(newData);
+    this.restoreHandlers;
+  }
+
+  _addEmojiClickHandler(evt) {
+    evt.preventDefault();
+
+    if(evt.target.tagName !== 'IMG') {
+      return;
+    }
+    const addEmojiContainer = this.getElement().querySelector('.film-details__add-emoji-label');
+    addEmojiContainer.innerHTML = `<img src="./images/emoji/${evt.target.dataset.name}.png" width="55" height="55" alt="emoji-smile">`;
+
+    this._data.newComment.emotion = evt.target.dataset.name;
+
+    this.updateElement({
+      emotion: evt.target.value,
+    }, true);
+  }
+
+  _commentTextAreaHandler(evt) {
+    evt.preventDefault();
+    this._data.newComment.text = evt.target.value;
+
+    this.updateElement({
+      commentText: evt.target.value,
+    }, true);
+  }
+
+  static parseFilmToData(film) {
+
+    const newComment = {
+      text: '',
+      emotion: '',
+      author: 'nobody',
+      date: '',
+    };
+
+    return Object.assign(
+      {},
+      film,
+      {
+        newComment,
+      },
+    );
+
+  }
+
+  static parseDataToFilm(data) {
+    delete data.newComment;
+
+    data = Object.assign({}, data);
+    return data;
   }
 }
