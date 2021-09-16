@@ -191,7 +191,7 @@ export const createFilmCard = (count) => {
       wathclist: Boolean(getRandomInteger(0, 1)),
       watched: Boolean(getRandomInteger(0, 1)),
       favorite: Boolean(getRandomInteger(0, 1)),
-      comments: generateComments(getRandomInteger(1,MAX_COMMENTS)),
+      comments: generateComments(getRandomInteger(0,MAX_COMMENTS)),
       fullDate:getFullDate(),
       director: FILM_DIRECTORS[getRandomInteger(0,FILM_DIRECTORS.length-1)],
       writers: FILM_WRITERS[getRandomInteger(0,FILM_WRITERS.length-1)],
