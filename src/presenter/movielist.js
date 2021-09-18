@@ -68,10 +68,10 @@ export default class MovieList {
   _sortFilms(typeSort) {
     switch (typeSort) {
       case sortType.DATE:
-        this._filmsArray.sort((aa, bb) => bb.year - aa.year);
+        this._filmsArray.sort((a, b) => b.year - a.year);
         break;
       case sortType.RATING:
-        this._filmsArray.sort((aa, bb) => bb.rating - aa.rating);
+        this._filmsArray.sort((a, b) => b.rating - a.rating);
         break;
       default:
         this._filmsArray = this._sourcedFilmsArray.slice();
