@@ -142,7 +142,22 @@ export default class PopupFilm extends AbstractView {
   }
 
   getTemplate() {
-    return createPopapFilmTemplate(this._film);
+    return createPopapFilmTemplate (this._data);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.film-details__emoji-list')
+      .addEventListener('click', this._addEmojiClickHandler);
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .addEventListener('input', this._commentTextAreaHandler);
+  }
+
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseClickHandle(this._closeClickHandler);
   }
 
   _closeClickHandler(evt) {
