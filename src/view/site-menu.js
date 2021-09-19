@@ -1,32 +1,46 @@
 import AbstractView from './abstract.js';
+const createFilterLinkTemplate = (filters) => {
+  const {name, count} = filters;
 
-const createFilterItemTemplate = (filter) => {
-  const {name, count} = filter;
-  return(
-    `<a href="#${name}" class="main-navigation__item">${name} <span class="main-navigation__item-count">${count}</span></a>`
+  return (
+    `<a href="#${name}" data-name="${name}" class="main-navigation__item">${name.toUpperCase().slice(0, 1) + name.slice(1)} <span class="main-navigation__item-count">${count}</span></a>`
   );
 };
 
-const createSiteMenuTemplate  = (filterItems) => {
-  const filterItemsTemplate = filterItems
-    .map((filter, index) => createFilterItemTemplate(filter, index === 0))
+const createMenuTemplate = (filterLinks) => {
+  const filterLinksTemplate = filterLinks
+    .slice(1)
+    .map((filter, index) => createFilterLinkTemplate(filter, index === 0))
     .join('');
+
   return `<nav class="main-navigation">
-    <div class="main-navigation__items">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    ${filterItemsTemplate}
-    </div>
-    <a href="#stats" class="main-navigation__additional">Stats</a>
-    </nav>`;
+            <div class="main-navigation__items">
+              <a href="#all" data-name="all" class="main-navigation__item">All movies</a>
+              ${filterLinksTemplate}
+            </div>
+            <a href="#stats" class="main-navigation__additional">Stats</a>
+          </nav>`;
 };
 
-export default class SiteMenuView extends AbstractView {
+export default class Filter extends AbstractView {
   constructor(filters) {
     super();
     this._filters = filters;
+
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createSiteMenuTemplate(this._filters);
+    return createMenuTemplate(this._filters);
+  }
+
+  _filterTypeChangeHandler(evt) {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.dataset.name);
+  }
+
+  setFilterTypeChangeHandler(callback) {
+    this._callback.filterTypeChange = callback;
+    this.getElement().querySelector('.main-navigation__items').addEventListener('click', this._filterTypeChangeHandler);
   }
 }
