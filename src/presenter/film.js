@@ -1,7 +1,9 @@
 
 import FilmCard from '../view/film-card.js';
 import PopupFilm from '../view/popap-film.js';
+import {UserAction, UpdateType, SUBMIT_KEY_CODE } from '../const.js';
 import {render, RenderPosition, replace, remove} from '../render.js';
+import dayjs from 'dayjs';
 const bodyElement = document.querySelector('body');
 const siteMainElement = document.querySelector('.main');
 
@@ -29,6 +31,8 @@ export default class Film {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handlerAddNewComment = this._handlerAddNewComment.bind(this);
+    this._handlerDeleteComment = this._handlerDeleteComment.bind(this);
   }
 
   unit(movie) {
@@ -42,6 +46,8 @@ export default class Film {
 
     this._filmCardComponent.setPopupClickHandler(this._handlePopupClick);
     this._filmPopupComponent.setCloseClickHandler(this._handleClosePopupClick);
+    this._filmPopupComponent.setNewCommentKeyDownHandler(this._addNewCommentHandler);
+    this._filmPopupComponent.setDeleteCommentKeyDownHandler(this._deleteCommentHandler);
     this._renderFilmCard();
 
     if (prevFilmCardComponent === null) {
@@ -89,8 +95,64 @@ export default class Film {
     this._statusPopup = statusPopup.OPEN;
   }
 
+  _addNewComment(commentData) {
+    commentData.newComment.date = dayjs().format('YYYY/MM/DD HH:mm');
+    commentData.comments.push(commentData.newComment);
+
+    this._changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        commentData,
+      ),
+    );
+
+    commentData.newComment = {
+      text: '',
+      emotion: '',
+      date: '',
+    };
+  }
+
+  _handlerAddNewComment(keyCode, commentData) {
+    if(SUBMIT_KEY_CODE.indexOf(keyCode) === -1) {
+      this._pressed.clear();
+      return;
+    }
+
+    this._pressed.add(keyCode);
+
+    for (const code of SUBMIT_KEY_CODE) {
+      if (!this._pressed.has(code)) {
+        return;
+      }
+    }
+    this._pressed.clear();
+
+    if(commentData.newComment.emotion === '' || commentData.newComment.text === '') {
+      return;
+    }
+    this._addNewComment(commentData);
+  }
+
+  _handlerDeleteComment(commentNumber, commentData) {
+    commentData.comments.splice(commentNumber, 1);
+
+    this._changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        commentData,
+      ),
+    );
+  }
+
   _handleFavoriteClick() {
     this._movieChange(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._movie,
@@ -103,6 +165,8 @@ export default class Film {
 
   _handleWatchlistClick() {
     this._movieChange(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._movie,
@@ -115,6 +179,8 @@ export default class Film {
 
   _handleWatchedClick() {
     this._movieChange(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._movie,

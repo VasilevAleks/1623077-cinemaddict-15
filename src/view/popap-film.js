@@ -1,5 +1,6 @@
 import SmartView from './smart.js';
 
+
 const createPopapFilmTemplate = (array) => {
   const {title,rating,url,fullDate,duration,genre,description,comments,director,writers,actors,MPAA, wathclist, watched, favorite} = array;
 
@@ -141,6 +142,9 @@ export default class PopupFilm extends SmartView {
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._addEmojiClickHandler = this._addEmojiClickHandler.bind(this);
     this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
+    this._addedListClickHandler = this._addedListClickHandler.bind(this);
+    this._newCommentHandler = this._newCommentHandler.bind(this);
+    this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
     this._setInnerHandlers();
   }
 
@@ -193,6 +197,49 @@ export default class PopupFilm extends SmartView {
     this.updateElement({
       emotion: evt.target.value,
     }, true);
+  }
+
+  _addedListClickHandler(evt) {
+    evt.preventDefault();
+    const category = evt.target.id;
+    this._callback.addedListPopupClick(category);
+  }
+
+  _alreadyWatchedPopupClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.alreadyWatchedPopupClick();
+  }
+
+  _addedFavoritesPopupClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.addedFavoritesPopupClick();
+  }
+
+
+  _newCommentHandler(evt) {
+    const keyCode = evt.key;
+    this._callback.newCommentKeyDown(keyCode, this._data);
+  }
+
+  _deleteCommentHandler(evt) {
+    evt.preventDefault();
+    if(evt.target.tagName !== 'BUTTON') {
+      return;
+    }
+    const commentNumber = evt.target.dataset.number;
+    this._callback.deleteCommentClick(commentNumber, this._data);
+  }
+
+  setNewCommentKeyDownHandler(callback) {
+    this._callback.newCommentKeyDown = callback;
+    document.addEventListener('keydown', this._newCommentHandler);
+  }
+
+  setDeleteCommentKeyDownHandler(callback) {
+    this._callback.deleteCommentClick = callback;
+    if(this._data.comments.length > 0) {
+      this.getElement().querySelector('.film-details__comments-list').addEventListener('click', this._deleteCommentHandler);
+    }
   }
 
   _commentTextAreaHandler(evt) {
