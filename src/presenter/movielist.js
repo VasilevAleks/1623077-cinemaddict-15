@@ -46,6 +46,7 @@ export default class MovieList {
 
   init() {
     render(this._listContainer,this._filmComponent, RenderPosition.BEFOREEND);
+
     this._renderMovieList();
   }
 
@@ -92,7 +93,6 @@ export default class MovieList {
   }
 
   _handleModelEvent(updateType, data) {
-    const prevFilmPresenter = this._filmPresenter.get(data.id);
 
     switch (updateType) {
       case UpdateType.PATCH:
@@ -102,12 +102,15 @@ export default class MovieList {
         this._clearFilmList();
         this._renderMovieList();
 
-        if(prevFilmPresenter._statusPopup === this.statusPopup.OPEN) {
-          prevFilmPresenter._closePopup();
+        if(this._prevFilmPresenter._statusPopup === this.statusPopup.OPEN) {
+          this._prevFilmPresenter._closePopup();
         }
         break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
+        this._renderMovieList();
+        break;
+      case UpdateType.INIT:
         this._renderMovieList();
         break;
     }

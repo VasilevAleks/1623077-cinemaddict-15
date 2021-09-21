@@ -1,8 +1,8 @@
 import SmartView from './smart.js';
-
+import dayjs from 'dayjs';
 
 const createPopapFilmTemplate = (array) => {
-  const {title,rating,url,fullDate,duration,genre,description,comments,director,writers,actors,MPAA, wathclist, watched, favorite} = array;
+  const {title, rating, url, fullDate, duration, genre, country, alternaiveTitle, description, comments, director, writers, actors, MPAA, wathclist, watched, favorite} = array;
 
   const wathclistAddClass = wathclist === true ? 'film-details__control-button--active' : '';
   const watchedAddClass = watched === true ? 'film-details__control-button--active' : '';
@@ -20,7 +20,7 @@ const createPopapFilmTemplate = (array) => {
           <p class="film-details__comment-text">${value.text}</p>
           <p class="film-details__comment-info">
            <span class="film-details__comment-author">${value.autor}</span>
-            <span class="film-details__comment-day">${value.day}</span>
+            <span class="film-details__comment-day">$${dayjs(value.date).format('YYYY/MM/DD HH:mm')}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
@@ -46,7 +46,7 @@ const createPopapFilmTemplate = (array) => {
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
               <h3 class="film-details__title">${title}</h3>
-              <p class="film-details__title-original">Original: The Great Flamarion</p>
+              <p class="film-details__title-original">${alternaiveTitle}</p>
             </div>
 
             <div class="film-details__rating">
@@ -77,7 +77,7 @@ const createPopapFilmTemplate = (array) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
-              <td class="film-details__cell">USA</td>
+              <td class="film-details__cell">${country}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Genres</td>
