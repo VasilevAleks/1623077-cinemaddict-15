@@ -25,3 +25,5 @@ export const UpdateType = {
 };
 
 export const SUBMIT_KEY_CODE = ['Control', 'Enter'];
+export const AUTHORIZATION = 'Basic VasilevAnatolivichAleksander24';
+export const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';

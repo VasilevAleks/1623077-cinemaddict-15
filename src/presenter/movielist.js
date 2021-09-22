@@ -15,10 +15,11 @@ const siteMainElement = document.querySelector('.main');
 const FILMS_STEP = 5;
 
 export default class MovieList {
-  constructor(listContainer, filmsModel, filtersModel) {
+  constructor(listContainer, filmsModel, filtersModel, api) {
     this._filmsModel = filmsModel;
     this._listContainer = listContainer;
     this._filtersModel = filtersModel;
+    this._api = api;
     this._renderedFilmsCount = FILMS_STEP;
     this._filmPresenter = new Map();
     this._sortComponent = null;
@@ -46,7 +47,8 @@ export default class MovieList {
 
   init() {
     render(this._listContainer,this._filmComponent, RenderPosition.BEFOREEND);
-
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._filtersModel.addObserver(this._handleModelEvent);
     this._renderMovieList();
   }
 
@@ -189,7 +191,7 @@ export default class MovieList {
   }
 
   _renderFilmCard(movie) {
-    const filmPresenter = new Film(this._containerComponent, this._handleViewAction, this._handleStatusPopupChange);
+    const filmPresenter = new Film(this._containerComponent, this._handleViewAction, this._handleStatusPopupChange, this._api);
     filmPresenter.unit(movie);
     this._filmPresenter.set(movie.id, filmPresenter);
   }

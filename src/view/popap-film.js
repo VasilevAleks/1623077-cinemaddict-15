@@ -1,25 +1,25 @@
 import SmartView from './smart.js';
 import dayjs from 'dayjs';
 
-const createPopapFilmTemplate = (array) => {
+const createPopapFilmTemplate = (array, commentsArray) => {
   const {title, rating, url, fullDate, duration, genre, country, alternaiveTitle, description, comments, director, writers, actors, MPAA, wathclist, watched, favorite} = array;
 
   const wathclistAddClass = wathclist === true ? 'film-details__control-button--active' : '';
   const watchedAddClass = watched === true ? 'film-details__control-button--active' : '';
   const favoriteAddClass = favorite === true ? 'film-details__control-button--active' : '';
 
-  const createCommentsFilm = (commentArray) => {
+  const createCommentsFilm = (commentsArray) => {
     let result = '';
-    for (const value of commentArray) {
+    for (const value of commentsArray) {
       result +=
       `<li class="film-details__comment">
         <span class="film-details__comment-emoji">
-        <img src="${value.emoji}" width="55" height="55" alt="emoji-smile">
+        <img src="${value.emotion}" width="55" height="55" alt="emoji-${value.emotion}">
         </span>
         <div>
-          <p class="film-details__comment-text">${value.text}</p>
+          <p class="film-details__comment-text">${value.comment}</p>
           <p class="film-details__comment-info">
-           <span class="film-details__comment-author">${value.autor}</span>
+           <span class="film-details__comment-author">${value.author}</span>
             <span class="film-details__comment-day">$${dayjs(value.date).format('YYYY/MM/DD HH:mm')}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
@@ -101,7 +101,7 @@ const createPopapFilmTemplate = (array) => {
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
-        ${createCommentsFilm(comments)}
+        ${createCommentsFilm(commentsArray)}
         </ul>
 
         <div class="film-details__new-comment">
@@ -136,9 +136,11 @@ const createPopapFilmTemplate = (array) => {
 };
 
 export default class PopupFilm extends SmartView {
-  constructor(film) {
+  constructor(film, api) {
     super();
     this._data = PopupFilm.parseFilmToData(film);
+    this._api = api;
+    this._comments = [];
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._addEmojiClickHandler = this._addEmojiClickHandler.bind(this);
     this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
@@ -146,10 +148,21 @@ export default class PopupFilm extends SmartView {
     this._newCommentHandler = this._newCommentHandler.bind(this);
     this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
     this._setInnerHandlers();
+    this._loadComments();
+
+  }
+
+  _loadComments() {
+    this._api.getComments(this._data.id).then((comments) => {
+      this._comments = comments;
+
+      return this._comments;
+
+    });
   }
 
   getTemplate() {
-    return createPopapFilmTemplate (this._data);
+    return createPopapFilmTemplate (this._data, this._comments);
   }
 
   _setInnerHandlers() {

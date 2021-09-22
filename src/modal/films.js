@@ -17,6 +17,10 @@ export default class FilmsModel extends AbstractObserver {
     return this._films;
   }
 
+  addComment(updateType, update) {
+    this._notify(updateType, update);
+  }
+
   updateFilm(updateType, update) {
 
     const index = this._films.findIndex((film) => film.id === update.id);
@@ -124,17 +128,10 @@ export default class FilmsModel extends AbstractObserver {
     const commentsIdArray = getCommentsId();
 
     const adaptedFilm = Object.assign(
-      {},
       {
         'id': film.id,
-      },
-      {
         'user_details': userDetails,
-      },
-      {
         comments: commentsIdArray,
-      },
-      {
         'film_info': filmInfo,
       },
     );

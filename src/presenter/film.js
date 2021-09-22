@@ -1,4 +1,3 @@
-
 import FilmCard from '../view/film-card.js';
 import PopupFilm from '../view/popap-film.js';
 import {UserAction, UpdateType, SUBMIT_KEY_CODE } from '../const.js';
@@ -14,15 +13,15 @@ const statusPopup = {
 
 
 export default class Film {
-  constructor(filmListContainer, movieChange, changeStatusPopup) {
+  constructor(filmListContainer, movieChange, changeStatusPopup, api) {
     this._filmListContainer = filmListContainer;
     this._movieChange = movieChange;
     this._changeStatusPopup = changeStatusPopup;
+    this._api = api;
 
     this._filmCardComponent = null;
     this._filmPopupComponent = null;
     this._statusPopup = statusPopup.CLOSE;
-
     this._closePopup = this._closePopup.bind(this);
     this._openPopup = this._openPopup.bind(this);
     this._handlePopupClick = this._handlePopupClick.bind(this);
@@ -37,18 +36,17 @@ export default class Film {
 
   unit(movie) {
     this._movie = movie;
-
     const prevFilmCardComponent = this._filmCardComponent;
     const prevFilmPopupComponent = this._filmPopupComponent;
-
     this._filmCardComponent = new FilmCard(movie);
-    this._filmPopupComponent = new PopupFilm(movie);
+    this._filmPopupComponent = new PopupFilm(movie, this._api);
 
     this._filmCardComponent.setPopupClickHandler(this._handlePopupClick);
     this._filmPopupComponent.setCloseClickHandler(this._handleClosePopupClick);
     this._filmPopupComponent.setNewCommentKeyDownHandler(this._addNewCommentHandler);
     this._filmPopupComponent.setDeleteCommentKeyDownHandler(this._deleteCommentHandler);
     this._renderFilmCard();
+
 
     if (prevFilmCardComponent === null) {
       render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);

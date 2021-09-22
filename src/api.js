@@ -3,8 +3,9 @@ import FilmsModel from './modal/films.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
-
 const SuccessHTTPStatusRange = {
   MIN: 200,
   MAX: 299,
@@ -22,8 +23,8 @@ export default class Api {
       .then((movies) => movies.map(FilmsModel.adaptToClient));
   }
 
-  getComments(filmsId) {
-    return this._load({url: `comments/${filmsId}`})
+  getComments(commentId) {
+    return this._load({url: `comments/${commentId}`})
       .then(Api.toJSON);
   }
 
@@ -40,11 +41,11 @@ export default class Api {
 
 
   addComment(comment) {
-    const filmId = comment.id;
+    const commentId = comment.id;
     delete comment.id;
 
     return this._load({
-      url: `comments/${filmId}`,
+      url: `comments/${commentId}`,
       method: Method.POST,
       body: JSON.stringify(comment),
       headers: new Headers({'Content-Type': 'application/json'}),
