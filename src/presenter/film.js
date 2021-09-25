@@ -19,6 +19,7 @@ export default class Film {
     this._changeStatusPopup = changeStatusPopup;
     this._api = api;
 
+
     this._filmCardComponent = null;
     this._filmPopupComponent = null;
     this._statusPopup = statusPopup.CLOSE;
@@ -38,15 +39,14 @@ export default class Film {
     this._movie = movie;
     const prevFilmCardComponent = this._filmCardComponent;
     const prevFilmPopupComponent = this._filmPopupComponent;
+    this._loadComments();
     this._filmCardComponent = new FilmCard(movie);
-    this._filmPopupComponent = new PopupFilm(movie, this._api);
-
+    this._filmPopupComponent = new PopupFilm(movie);
     this._filmCardComponent.setPopupClickHandler(this._handlePopupClick);
     this._filmPopupComponent.setCloseClickHandler(this._handleClosePopupClick);
     this._filmPopupComponent.setNewCommentKeyDownHandler(this._addNewCommentHandler);
     this._filmPopupComponent.setDeleteCommentKeyDownHandler(this._deleteCommentHandler);
     this._renderFilmCard();
-
 
     if (prevFilmCardComponent === null) {
       render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -85,12 +85,20 @@ export default class Film {
     }
   }
 
+  _loadComments() {
+    this._api.getComments(this._movie.id).then((comments) => {
+      this._movie.comments = comments;
+    });
+  }
+
   _openPopup() {
     render(siteMainElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
     bodyElement.classList.add('hide-overflow');
     document.addEventListener('keydown', this._escKeyDownHandler);
     this._changeStatusPopup();
+    this._loadComments();
     this._statusPopup = statusPopup.OPEN;
+
   }
 
   _addNewComment(commentData) {

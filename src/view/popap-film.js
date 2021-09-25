@@ -1,9 +1,10 @@
 import SmartView from './smart.js';
 import dayjs from 'dayjs';
 
-const createPopapFilmTemplate = (array, commentsArray) => {
-  const {title, rating, url, fullDate, duration, genre, country, alternaiveTitle, description, comments, director, writers, actors, MPAA, wathclist, watched, favorite} = array;
+const createPopapFilmTemplate = (film) => {
 
+  const {title, rating, url, fullDate, duration, genre, country, alternaiveTitle, description, comments, director, writers, actors, MPAA, wathclist, watched, favorite} = film;
+  console.log(comments, film.comments);
   const wathclistAddClass = wathclist === true ? 'film-details__control-button--active' : '';
   const watchedAddClass = watched === true ? 'film-details__control-button--active' : '';
   const favoriteAddClass = favorite === true ? 'film-details__control-button--active' : '';
@@ -101,7 +102,7 @@ const createPopapFilmTemplate = (array, commentsArray) => {
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
-        ${createCommentsFilm(commentsArray)}
+        ${createCommentsFilm(array.comments)}
         </ul>
 
         <div class="film-details__new-comment">
@@ -136,11 +137,10 @@ const createPopapFilmTemplate = (array, commentsArray) => {
 };
 
 export default class PopupFilm extends SmartView {
-  constructor(film, api) {
+  constructor(film) {
     super();
     this._data = PopupFilm.parseFilmToData(film);
-    this._api = api;
-    this._comments = [];
+    console.log(this._data);
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._addEmojiClickHandler = this._addEmojiClickHandler.bind(this);
     this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
@@ -148,22 +148,12 @@ export default class PopupFilm extends SmartView {
     this._newCommentHandler = this._newCommentHandler.bind(this);
     this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
     this._setInnerHandlers();
-    this._loadComments();
-
-  }
-
-  _loadComments() {
-    this._api.getComments(this._data.id).then((comments) => {
-      this._comments = comments;
-
-      return this._comments;
-
-    });
   }
 
   getTemplate() {
-    return createPopapFilmTemplate (this._data, this._comments);
+    return createPopapFilmTemplate(this._data);
   }
+
 
   _setInnerHandlers() {
     this.getElement()
@@ -273,8 +263,8 @@ export default class PopupFilm extends SmartView {
       date: '',
     };
 
+
     return Object.assign(
-      {},
       film,
       {
         newComment,

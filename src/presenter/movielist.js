@@ -190,11 +190,19 @@ export default class MovieList {
     }
   }
 
+  _loadComments(movie) {
+    this._api.getComments(movie.id).then((comments) => {
+      this._comments = comments;
+    });
+  }
+
   _renderFilmCard(movie) {
     const filmPresenter = new Film(this._containerComponent, this._handleViewAction, this._handleStatusPopupChange, this._api);
+
     filmPresenter.unit(movie);
     this._filmPresenter.set(movie.id, filmPresenter);
   }
+
 
   _renderFilmCards(films) {
     films.forEach((film) => this._renderFilmCard(film));
