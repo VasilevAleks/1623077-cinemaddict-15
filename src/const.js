@@ -3,6 +3,9 @@ export const MINUTES_IN_HOUR_COUNT = 60;
 export const HOUR_ZERO_COUNT = 0;
 export const MINUTES_ZERO_COUNT = 0;
 export const INITIAL_RUNTIME_COUNT = 0;
+export const AUTHORIZATION = 'Basic VasilevAnatolivichAleksander24';
+export const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
+
 
 export const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 

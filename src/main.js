@@ -1,5 +1,5 @@
 import {render, remove} from './utils/render.js';
-import {MenuItem, UpdateType} from './const.js';
+import {MenuItem, UpdateType, AUTHORIZATION, END_POINT} from './const.js';
 import FilmAmountView from './view/films-amount.js';
 import StatsView from './view/stats.js';
 import FilmsPresenter from './presenter/films.js';
@@ -8,8 +8,6 @@ import FilmsModel from './model/films.js';
 import FilterModel from './model/filter.js';
 import Api from './api.js';
 
-const AUTHORIZATION = 'Basic stroms829bg0506nb';
-const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
 
 const bodyElement = document.body;
 const mainElement = bodyElement.querySelector('.main');
